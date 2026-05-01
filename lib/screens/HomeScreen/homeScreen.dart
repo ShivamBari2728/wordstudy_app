@@ -3,6 +3,7 @@ import 'package:wordstudy_app/constants.dart' as constains;
 import 'package:wordstudy_app/generalimports.dart';
 import 'package:wordstudy_app/screens/LearningScreen/learningScreen.dart';
 import 'package:wordstudy_app/screens/PracticeScreen/PracticeHomeScreen.dart';
+import 'package:wordstudy_app/screens/signUpScreen.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -20,6 +21,21 @@ class _HomescreenState extends State<Homescreen> {
     super.initState();
     _loadStudentData();
   }
+  Future<void> _logout() async {
+  /// Clear session (student side)
+  await SessionManager.setUserRole("");
+  await SessionManager.setProfileCreated(false);
+
+  if (!mounted) return;
+
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const StudentSetupScreen(), // your entry screen
+    ),
+    (route) => false,
+  );
+}
 
   Future<void> _loadStudentData() async {
     final name = await SessionManager.getStudentName();
@@ -53,47 +69,59 @@ class _HomescreenState extends State<Homescreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      children: [
-                        FutureBuilder<String>(
-                          future: SessionManager.getStudentGender(),
-                          builder: (context, snapshot) {
-                            final gender = snapshot.data ?? "boy";
+  children: [
+    FutureBuilder<String>(
+      future: SessionManager.getStudentGender(),
+      builder: (context, snapshot) {
+        final gender = snapshot.data ?? "boy";
 
-                            return CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.white,
-                              backgroundImage: NetworkImage(
-                                gender == "girl"
-                                    ? constains.avaterImageGirl
-                                    : constains.avaterImageBoy,
-                              ),
-                            );
-                          },
-                        ),
+        return CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.white,
+          backgroundImage: NetworkImage(
+            gender == "girl"
+                ? constains.avaterImageGirl
+                : constains.avaterImageBoy,
+          ),
+        );
+      },
+    ),
 
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              studentName.isEmpty ? "Hi!" : "Hi, $studentName!",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                // fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              studentGrade.isEmpty ? "" : "Grade $studentGrade",
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+    const SizedBox(width: 12),
+
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          studentName.isEmpty ? "Hi!" : "Hi, $studentName!",
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+          ),
+        ),
+        Text(
+          studentGrade.isEmpty ? "" : "Grade $studentGrade",
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    ),
+
+    const Spacer(), // 🔥 pushes logout to right
+
+    /// 🔥 LOGOUT ICON
+    GestureDetector(
+      onTap: () => _logout(),
+      child: const Icon(
+        Icons.logout,
+        color: Colors.white,
+        size: 26,
+      ),
+    ),
+  ],
+)
                   ),
                 ),
               ),

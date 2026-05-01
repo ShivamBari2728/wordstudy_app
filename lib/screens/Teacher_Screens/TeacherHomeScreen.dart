@@ -3,6 +3,7 @@ import 'package:wordstudy_app/Models/TeacherDashboardModel.dart';
 import 'package:wordstudy_app/colors/colorRes.dart';
 import 'package:wordstudy_app/constants.dart';
 import 'package:wordstudy_app/generalimports.dart';
+import 'package:wordstudy_app/screens/signUpScreen.dart';
 
 class Teacherhomescreen extends StatefulWidget {
   const Teacherhomescreen({super.key});
@@ -18,6 +19,23 @@ bool isLoading = true;
 void initState() {
   super.initState();
   loadDashboard();
+}
+Future<void> _logout() async {
+  /// Firebase logout
+  await FirebaseAuth.instance.signOut();
+
+  /// Clear role
+  await SessionManager.setUserRole("");
+
+  if (!mounted) return;
+
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const StudentSetupScreen(), // or your entry screen
+    ),
+    (route) => false,
+  );
 }
 Future<void> loadDashboard() async {
   try {
@@ -101,36 +119,55 @@ Future<void> loadDashboard() async {
             child: Column(
               children: [
                 Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(data?.avatarUrl??""),
-                    ),
-                    const SizedBox(width: 16),
+  children: [
+    CircleAvatar(
+      radius: 35,
+      backgroundColor: Colors.white,
+      backgroundImage: (data?.avatarUrl != null &&
+              data!.avatarUrl.isNotEmpty)
+          ? NetworkImage(data!.avatarUrl)
+          : null,
+      child: (data?.avatarUrl == null || data!.avatarUrl.isEmpty)
+          ? const Icon(Icons.person, color: Colors.grey)
+          : null,
+    ),
 
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Hi 👋",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          data?.teacherName??"",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+    const SizedBox(width: 16),
+
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Hi 👋",
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          data?.teacherName ?? "",
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+
+    const Spacer(), // 🔥 pushes icon to right
+
+    /// 🔥 LOGOUT ICON
+    GestureDetector(
+      onTap: () => _logout(),
+      child: const Icon(
+        Icons.logout,
+        color: Colors.white,
+        size: 26,
+      ),
+    ),
+  ],
+),
 
                 const SizedBox(height: 30),
                 Expanded(
@@ -175,7 +212,6 @@ Future<void> loadDashboard() async {
     );
   }
 
-  /// 📦 STAT CARD
   Widget _statCard(String title, String value, IconData icon) {
     return Expanded(
       child: Container(
@@ -208,7 +244,6 @@ Future<void> loadDashboard() async {
     );
   }
 
-  /// 🔘 ACTION BUTTON
   Widget _actionButton(String text, IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,

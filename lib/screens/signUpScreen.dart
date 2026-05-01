@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordstudy_app/constants.dart' as constains;
 import 'package:wordstudy_app/generalimports.dart';
+import 'package:wordstudy_app/screens/Teacher_Screens/TeacherHomeScreen.dart';
 import 'package:wordstudy_app/screens/Teacher_Screens/TeacherLoginScreen.dart';
 import 'package:wordstudy_app/screens/mainscreen.dart';
 
@@ -24,15 +25,33 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
   }
 
   Future<void> _checkIfAlreadySignedIn() async {
-    final isCreated = await SessionManager.isProfileCreated();
-    if (isCreated) {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Mainscreen()),
-      );
-    }
+  final role = await SessionManager.getUserRole();
+  if (role == "teacher" &&
+      FirebaseAuth.instance.currentUser != null) {
+
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const Mainscreen(),
+      ),
+    );
+    return;
   }
+  final isCreated = await SessionManager.isProfileCreated();
+
+  if (role == "student" && isCreated) {
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const Mainscreen(),
+      ),
+    );
+  }
+}
 
   void _continue() async {
     final name = _nameController.text.trim();

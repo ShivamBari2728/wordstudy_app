@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordstudy_app/constants.dart' as constains;
 import 'package:wordstudy_app/generalimports.dart';
+import 'package:wordstudy_app/screens/Teacher_Screens/TeacherLoginScreen.dart';
 import 'package:wordstudy_app/screens/mainscreen.dart';
 
 class StudentSetupScreen extends StatefulWidget {
@@ -43,6 +44,7 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
     await SessionManager.setStudentGrade(grade);
     await SessionManager.setStudentGender(selectedGender);
     await SessionManager.setProfileCreated(true);
+    await SessionManager.setUserRole("student");
 
     if (!mounted) return;
 
@@ -65,7 +67,8 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: const AssetImage(
-                        "assets/images/SimpleWordsBGImage.png"),
+                      "assets/images/SimpleWordsBGImage.png",
+                    ),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.45),
@@ -114,8 +117,7 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
 
                           /// 👦👧 GENDER DROPDOWN
                           Container(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(16),
@@ -179,15 +181,15 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
                             controller: _gradeController,
                             keyboardType: TextInputType.number,
                             style: const TextStyle(
-                              color:Colors.yellow,
+                              color: Colors.yellow,
                               fontSize: 22,
                             ),
                             decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 18),
-                              hintText:
-                                  "Enter your grade (e.g. 1, 2, 3)",
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 18,
+                              ),
+                              hintText: "Enter your grade (e.g. 1, 2, 3)",
                               hintStyle: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 18,
@@ -206,15 +208,13 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
                           /// 👉 CONTINUE
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  ColorRes.primaryAppColor,
+                              backgroundColor: ColorRes.primaryAppColor,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 25,
                                 vertical: 10,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(24),
                               ),
                             ),
                             onPressed: _continue,
@@ -223,6 +223,23 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
                               style: TextStyle(
                                 fontSize: 25,
                                 color: Colors.white,
+                              ),
+                            ),
+                          ),
+                         const SizedBox(height: 40),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                 MaterialPageRoute(builder: (_) => const TeacherLoginScreen()),
+                              );
+                            },
+                            child: const Text(
+                              "Login as Teacher?",
+                              style: TextStyle(
+                                color: Colors.yellow,
+                                fontSize: 16,
+                                decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
@@ -240,10 +257,7 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
   }
 
   /// 👦👧 GENDER AVATAR WIDGET
-  Widget _genderAvatar({
-    required String gender,
-    required String imageUrl,
-  }) {
+  Widget _genderAvatar({required String gender, required String imageUrl}) {
     final bool isSelected = selectedGender == gender;
 
     return GestureDetector(
@@ -268,8 +282,7 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
               style: TextStyle(
                 color: Colors.white,
                 fontSize: isSelected ? 16 : 14,
-                fontWeight:
-                    isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ],

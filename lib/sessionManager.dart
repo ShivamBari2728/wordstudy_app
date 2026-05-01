@@ -75,6 +75,17 @@ static Future<String> getStudentGender() async {
   return prefs.getString(_studentGenderKey) ?? "boy";
 }
 
+static const String _userRoleKey = "user_role";
+
+static Future<void> setUserRole(String role) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(_userRoleKey, role);
+}
+
+static Future<String?> getUserRole() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(_userRoleKey);
+}
 
 
 }

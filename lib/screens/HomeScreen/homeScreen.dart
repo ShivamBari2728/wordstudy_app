@@ -28,8 +28,8 @@ class _HomescreenState extends State<Homescreen> {
     if (!mounted) return;
 
     setState(() {
-      studentName = name!;
-      studentGrade = grade!;
+      studentName = name ?? "user";
+      studentGrade = grade ?? "user";
     });
   }
 

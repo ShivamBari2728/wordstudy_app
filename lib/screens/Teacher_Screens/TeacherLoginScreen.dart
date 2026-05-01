@@ -16,42 +16,81 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
   bool isLoading = false;
   String? errorText;
 
-  /// 🔐 TEMP LOGIN (replace later with Firebase)
-  Future<bool> _login(String email, String password) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    if (email == "admin" && password == "admin") {
-      await SessionManager.setUserRole("teacher");
-      return true;
-    }
-    return false;
-  }
-
   void _handleLogin() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) return;
 
     setState(() {
       isLoading = true;
       errorText = null;
     });
 
-    final success = await _login(email, password);
+    try {
+      /// 🔐 TRY LOGIN
+      final userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
 
-    setState(() {
-      isLoading = false;
-    });
+      final uid = userCredential.user!.uid;
 
-    if (success) {
+      await SessionManager.setUserRole("teacher");
+
+      /// 🔥 Create Firestore doc if not exists
+      final docRef = FirebaseFirestore.instance.collection("teachers").doc(uid);
+
+      final doc = await docRef.get();
+
+      if (!doc.exists) {
+        await docRef.set({
+          "name": email.split("@")[0],
+          "avatar": "",
+          "created_at": FieldValue.serverTimestamp(),
+        });
+      }
+
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Mainscreen()),
       );
-    } else {
+    } on FirebaseAuthException catch (e) {
+      /// 🔥 AUTO SIGNUP (TEMP SOLUTION)
+      if (e.code == 'user-not-found') {
+        try {
+          final userCredential = await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(email: email, password: password);
+
+          final uid = userCredential.user!.uid;
+
+          await SessionManager.setUserRole("teacher");
+
+          await FirebaseFirestore.instance.collection("teachers").doc(uid).set({
+            "name": email.split("@")[0],
+            "avatar": "",
+            "created_at": FieldValue.serverTimestamp(),
+          });
+
+          if (!mounted) return;
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Mainscreen()),
+          );
+        } catch (signupError) {
+          setState(() {
+            errorText = "Signup failed";
+          });
+        }
+      } else {
+        setState(() {
+          errorText = e.message ?? "Login failed";
+        });
+      }
+    } finally {
       setState(() {
-        errorText = "Invalid email or password";
+        isLoading = false;
       });
     }
   }

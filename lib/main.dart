@@ -1,12 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wordstudy_app/firebase_options.dart';
 import 'package:wordstudy_app/screens/mainscreen.dart';
 import 'package:wordstudy_app/generalimports.dart';
 import 'package:wordstudy_app/screens/signUpScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);

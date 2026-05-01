@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordstudy_app/Models/TeacherDashboardModel.dart';
 import 'package:wordstudy_app/colors/colorRes.dart';
 import 'package:wordstudy_app/constants.dart';
+import 'package:wordstudy_app/generalimports.dart';
 
 class Teacherhomescreen extends StatefulWidget {
   const Teacherhomescreen({super.key});
@@ -11,16 +12,74 @@ class Teacherhomescreen extends StatefulWidget {
 }
 
 class _TeacherhomescreenState extends State<Teacherhomescreen> {
+  TeacherDashboardModel? data;
+bool isLoading = true;
+@override
+void initState() {
+  super.initState();
+  loadDashboard();
+}
+Future<void> loadDashboard() async {
+  try {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
 
+    final firestore = FirebaseFirestore.instance;
+
+    final teacherDoc =
+        await firestore.collection("teachers").doc(uid).get();
+
+    final teacherData = teacherDoc.data() ?? {};
+
+    final lessonsSnap = await firestore
+        .collection("teachers")
+        .doc(uid)
+        .collection("lessons")
+        .get();
+
+    final testsSnap = await firestore
+        .collection("teachers")
+        .doc(uid)
+        .collection("tests")
+        .get();
+
+    final studentsSnap = await firestore
+        .collection("teachers")
+        .doc(uid)
+        .collection("students")
+        .get();
+
+    if (!mounted) return; // 🔥 MUST be here (before setState)
+
+    setState(() {
+      data = TeacherDashboardModel(
+        teacherName: teacherData['name'] ?? '',
+        avatarUrl: teacherData['avatar'] ?? '',
+        lessonsCount: lessonsSnap.docs.length,
+        testsCount: testsSnap.docs.length,
+        studentsCount: studentsSnap.docs.length,
+        avgScore: 0,
+      );
+      isLoading = false;
+    });
+
+  } catch (e) {
+    if (!mounted) return; // 🔥 ALSO here
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+}
   ///  Temporary dummy data (replace with API later)
-  final TeacherDashboardModel data = TeacherDashboardModel(
-    teacherName: "Shivam Sir",
-    avatarUrl: avatarImageTeacher,
-    lessonsCount: 12,
-    testsCount: 8,
-    studentsCount: 45,
-    avgScore: 76.5,
-  );
+  // final TeacherDashboardModel data = TeacherDashboardModel(
+  //   teacherName: "Shivam Sir",
+  //   avatarUrl: avatarImageTeacher,
+  //   lessonsCount: 12,
+  //   testsCount: 8,
+  //   studentsCount: 45,
+  //   avgScore: 76.5,
+  // );
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +105,7 @@ class _TeacherhomescreenState extends State<Teacherhomescreen> {
                     CircleAvatar(
                       radius: 35,
                       backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(data.avatarUrl),
+                      backgroundImage: NetworkImage(data?.avatarUrl??""),
                     ),
                     const SizedBox(width: 16),
 
@@ -61,7 +120,7 @@ class _TeacherhomescreenState extends State<Teacherhomescreen> {
                           ),
                         ),
                         Text(
-                          data.teacherName,
+                          data?.teacherName??"",
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
@@ -80,9 +139,9 @@ class _TeacherhomescreenState extends State<Teacherhomescreen> {
 
                       Row(
                         children: [
-                          _statCard("Lessons", data.lessonsCount.toString(), Icons.menu_book),
+                          _statCard("Lessons", (data?.lessonsCount??"0").toString(), Icons.menu_book),
                           const SizedBox(width: 12),
-                          _statCard("Tests", data.testsCount.toString(), Icons.quiz),
+                          _statCard("Tests", (data?.testsCount??"0").toString(), Icons.quiz),
                         ],
                       ),
 
@@ -90,9 +149,9 @@ class _TeacherhomescreenState extends State<Teacherhomescreen> {
 
                       Row(
                         children: [
-                          _statCard("Students", data.studentsCount.toString(), Icons.people),
+                          _statCard("Students", (data?.studentsCount??"0").toString(), Icons.people),
                           const SizedBox(width: 12),
-                          _statCard("Avg Score", "${data.avgScore}%", Icons.bar_chart),
+                          _statCard("Avg Score", "${data?.avgScore??0}%", Icons.bar_chart),
                         ],
                       ),
 

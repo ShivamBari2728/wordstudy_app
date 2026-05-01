@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "366597271849",
+    "project_id": "easyvocab-88a02",
+    "storage_bucket": "easyvocab-88a02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366597271849:android:90f6ef00c026ef87ff0738",
+        "android_client_info": {
+          "package_name": "com.example.wordstudy_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMmzPF41uRk7ErowMR6FFs6E0BZJbfm08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

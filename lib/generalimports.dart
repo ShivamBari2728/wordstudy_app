@@ -12,3 +12,7 @@ export 'package:wordstudy_app/sessionManager.dart';
 
 export 'package:provider/provider.dart';
 export 'package:wordstudy_app/Providers/practiceProgressProvider.dart';
+export 'package:firebase_core/firebase_core.dart';
+export 'package:wordstudy_app/firebase_options.dart';
+export 'package:cloud_firestore/cloud_firestore.dart';
+export 'package:firebase_auth/firebase_auth.dart';

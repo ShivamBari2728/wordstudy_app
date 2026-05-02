@@ -3,36 +3,52 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wordstudy_app/colors/colorRes.dart';
-import 'package:wordstudy_app/screens/Teacher_Screens/CreateTestScreen.dart';
-// import your CreateTestScreen here
-// import 'package:wordstudy_app/screens/Teacher_Screens/CreateTestScreen.dart';
 
-class Teachertestscreen extends StatefulWidget {
-  const Teachertestscreen({super.key});
+enum ContentType { lesson, test }
+
+class ContentListScreen extends StatefulWidget {
+  final ContentType type;
+  final Widget createScreen;
+
+  const ContentListScreen({
+    super.key,
+    required this.type,
+    required this.createScreen,
+  });
 
   @override
-  State<Teachertestscreen> createState() => _TeachertestscreenState();
+  State<ContentListScreen> createState() => _ContentListScreenState();
 }
 
-class _TeachertestscreenState extends State<Teachertestscreen> {
-  List<Map<String, dynamic>> tests = [];
+class _ContentListScreenState extends State<ContentListScreen> {
+  List<Map<String, dynamic>> items = [];
   bool isLoading = true;
+  String get title =>
+      widget.type == ContentType.lesson ? "Your Lessons" : "Your Tests";
+
+  String get collection =>
+      widget.type == ContentType.lesson ? "lessons" : "tests";
+
+  String get buttonText =>
+      widget.type == ContentType.lesson ? "Create Lesson" : "Create Test";
+
+  IconData get icon =>
+      widget.type == ContentType.lesson ? Icons.menu_book : Icons.quiz;
 
   @override
   void initState() {
     super.initState();
-    fetchTests();
+    fetchItems();
   }
 
-  /// 🔥 FETCH TESTS (same as lessons but "tests")
-  Future<void> fetchTests() async {
+  Future<void> fetchItems() async {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
 
       final snapshot = await FirebaseFirestore.instance
           .collection("teachers")
           .doc(uid)
-          .collection("tests") // ✅ changed
+          .collection(collection)
           .orderBy("created_at", descending: true)
           .get();
 
@@ -40,37 +56,38 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
         final data = doc.data();
         return {
           "id": doc.id,
-          "title": data["title"] ?? "Untitled Test",
+          "title": data["title"] ?? "Untitled",
         };
       }).toList();
 
       if (!mounted) return;
 
       setState(() {
-        tests = fetched;
+        items = fetched;
         isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
+
       setState(() => isLoading = false);
     }
   }
 
-  /// 🗑 DELETE TEST
-  Future<void> deleteTest(String id) async {
+  /// 🗑 DELETE (same logic)
+  Future<void> deleteItem(String id) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
     await FirebaseFirestore.instance
         .collection("teachers")
         .doc(uid)
-        .collection("tests") // ✅ changed
+        .collection(collection)
         .doc(id)
         .delete();
 
-    fetchTests();
+    fetchItems();
   }
 
-  /// ⚠️ DELETE DIALOG
+  /// ⚠️ DELETE DIALOG (same UI)
   void showDeleteDialog(String id) {
     showDialog(
       context: context,
@@ -87,9 +104,11 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  "Delete Test?",
-                  style: TextStyle(
+                Text(
+                  widget.type == ContentType.lesson
+                      ? "Delete Lesson?"
+                      : "Delete Test?",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -122,10 +141,16 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
                           final messenger =
                               ScaffoldMessenger.of(this.context);
 
-                          await deleteTest(id);
+                          await deleteItem(id);
 
                           messenger.showSnackBar(
-                            const SnackBar(content: Text("Test deleted")),
+                            SnackBar(
+                              content: Text(
+                                widget.type == ContentType.lesson
+                                    ? "Lesson deleted"
+                                    : "Test deleted",
+                              ),
+                            ),
                           );
                         },
                         child: _btn("Delete", Colors.red),
@@ -175,9 +200,9 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                const Text(
-                  "Your Tests",
-                  style: TextStyle(
+                Text(
+                  title,
+                  style: const TextStyle(
                     fontSize: 26,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -190,24 +215,26 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
                   const Expanded(
                     child: Center(child: CircularProgressIndicator()),
                   )
-                else if (tests.isEmpty)
+                else if (items.isEmpty)
                   Expanded(
                     child: Center(
-                      child: const Text(
-                        "You haven't created any tests yet",
-                        style: TextStyle(color: Colors.white70),
+                      child: Text(
+                        widget.type == ContentType.lesson
+                            ? "You haven't created any lessons yet"
+                            : "You haven't created any tests yet",
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ),
                   )
                 else
                   Expanded(
                     child: RefreshIndicator(
-                      onRefresh: fetchTests,
+                      onRefresh: fetchItems,
                       child: ListView.builder(
-                        itemCount: tests.length,
+                        itemCount: items.length,
                         itemBuilder: (context, index) {
-                          final test = tests[index];
-                          return _card(test["title"], test["id"]);
+                          final item = items[index];
+                          return _card(item["title"], item["id"]);
                         },
                       ),
                     ),
@@ -218,29 +245,29 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
         ),
       ),
 
-      /// ➕ CREATE TEST BUTTON
+      /// 🔥 FAB (same logic, dynamic screen)
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: ColorRes.primaryAppColor,
         onPressed: () async {
-          
-          await Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const Createtestscreen()));
-
-          fetchTests();
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => widget.createScreen),
+          );
+          fetchItems();
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          "Create Test",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+        label: Text(
+          buttonText,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
     );
   }
 
-  /// 📦 CARD UI (same as lesson)
+  /// 🔥 CARD (same UI)
   Widget _card(String title, String id) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -251,7 +278,7 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.quiz, color: Colors.yellow, size: 28),
+          Icon(icon, color: Colors.yellow, size: 28),
           const SizedBox(width: 12),
 
           Expanded(

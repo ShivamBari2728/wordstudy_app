@@ -45,7 +45,7 @@ class _MainscreenState extends State<Mainscreen> {
         Teacherlessionsscreen(),
         Teachertestscreen(),
         Teacherstudentsscreen(),
-        Teacherprofilescreen(),
+        //Teacherprofilescreen(),
       ];
     } else {
       return const [
@@ -64,7 +64,7 @@ class _MainscreenState extends State<Mainscreen> {
         _navIcon('assets/icons/navbaricons/bookicon.svg'),
         _navIcon('assets/icons/navbaricons/testicon.svg'),
         _navIcon('assets/icons/navbaricons/studenticon.svg'),
-        _navIcon('assets/icons/navbaricons/profileicon.svg'),
+        //_navIcon('assets/icons/navbaricons/profileicon.svg'),
       ];
     } else {
       return [

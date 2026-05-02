@@ -40,14 +40,15 @@ Future<void> _logout() async {
 Future<void> loadDashboard() async {
   try {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-
     final firestore = FirebaseFirestore.instance;
 
+    /// 🔹 TEACHER DATA
     final teacherDoc =
         await firestore.collection("teachers").doc(uid).get();
 
     final teacherData = teacherDoc.data() ?? {};
 
+    /// 🔹 COUNTS
     final lessonsSnap = await firestore
         .collection("teachers")
         .doc(uid)
@@ -66,7 +67,39 @@ Future<void> loadDashboard() async {
         .collection("students")
         .get();
 
-    if (!mounted) return; // 🔥 MUST be here (before setState)
+    /// 🔥 FETCH TEST RESULTS
+    final resultsSnap = await firestore
+        .collection("test_results")
+        .get();
+
+    int totalScore = 0;
+    int totalQuestions = 0;
+
+    /// 🔥 SAFE PARSER FUNCTION
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is double) return value.toInt();
+      return 0;
+    }
+
+    for (var doc in resultsSnap.docs) {
+      final data = doc.data();
+
+      final score = parseInt(data["score"]);
+      final total = parseInt(data["total"]);
+
+      totalScore += score;
+      totalQuestions += total;
+    }
+
+    /// 🔥 CALCULATE AVG %
+    double avgScore = 0;
+
+    if (totalQuestions > 0) {
+      avgScore = (totalScore / totalQuestions) * 100;
+    }
+
+    if (!mounted) return;
 
     setState(() {
       data = TeacherDashboardModel(
@@ -75,19 +108,18 @@ Future<void> loadDashboard() async {
         lessonsCount: lessonsSnap.docs.length,
         testsCount: testsSnap.docs.length,
         studentsCount: studentsSnap.docs.length,
-        avgScore: 0,
+        avgScore: avgScore,
       );
+
       isLoading = false;
     });
-
   } catch (e) {
-    if (!mounted) return; // 🔥 ALSO here
+    if (!mounted) return;
 
     setState(() {
       isLoading = false;
     });
   }
-
 }
   ///  Temporary dummy data (replace with API later)
   // final TeacherDashboardModel data = TeacherDashboardModel(
@@ -188,7 +220,7 @@ Future<void> loadDashboard() async {
                         children: [
                           _statCard("Students", (data?.studentsCount??"0").toString(), Icons.people),
                           const SizedBox(width: 12),
-                          _statCard("Avg Score", "${data?.avgScore??0}%", Icons.bar_chart),
+                          _statCard("Avg Score", "${(data?.avgScore ?? 0).toStringAsFixed(1)}%", Icons.bar_chart),
                         ],
                       ),
 

@@ -219,7 +219,8 @@ class _CreatetestscreenState extends State<Createtestscreen> {
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white,
+        fontFamily: "Roboto",),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.white70),
@@ -349,17 +350,23 @@ class _CreatetestscreenState extends State<Createtestscreen> {
               children: [
                 Expanded(
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.primaryAppColor,
+                    ),
                     onPressed: addQuestion,
-                    child: const Text("+ Add"),
+                    child: const Text("+ Add",style: TextStyle(color: Colors.white,fontSize: 20),),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.primaryAppColor,
+                    ),
                     onPressed: isLoading ? null : saveTest,
                     child: isLoading
                         ? const CircularProgressIndicator()
-                        : const Text("Save"),
+                        : const Text("Save",style: TextStyle(color: Colors.white,fontSize: 20),),
                   ),
                 ),
               ],

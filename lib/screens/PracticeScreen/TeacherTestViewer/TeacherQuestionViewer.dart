@@ -245,6 +245,7 @@ class _TeacherquestionsviewerState extends State<Teacherquestionsviewer> {
                             q["question"],
                             textAlign: TextAlign.center,
                             style: const TextStyle(
+                              fontFamily: "Roboto",
                               fontSize: 22,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -291,6 +292,7 @@ class _TeacherquestionsviewerState extends State<Teacherquestionsviewer> {
                             : "NEXT",
                         style: const TextStyle(
                           fontSize: 18,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
                         ),
@@ -345,6 +347,7 @@ class _TeacherquestionsviewerState extends State<Teacherquestionsviewer> {
                 text,
                 style: const TextStyle(
                   color: Colors.white,
+                  fontFamily: 'Roboto',
                   fontSize: 16,
                 ),
               ),

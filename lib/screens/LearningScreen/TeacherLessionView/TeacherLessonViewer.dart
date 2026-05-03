@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:wordstudy_app/colors/colorRes.dart';
@@ -158,37 +160,59 @@ class _TeacherlessonviewerState extends State<Teacherlessonviewer> {
   }
 
   /// 🔥 SLIDE UI (MATCHED STYLE)
-  Widget _buildSlide(Map slide) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-          /// TEXT
-          Text(
-            slide["text"] ?? "",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          /// IMAGE
-          if (slide["imageUrl"] != null &&
-              slide["imageUrl"].toString().isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Image.network(
-                slide["imageUrl"],
-                height: 220,
+Widget _buildSlide(Map slide) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.12), // 🔥 glass effect
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
               ),
             ),
-        ],
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                /// 🔤 TEXT
+                Text(
+                  slide["text"] ?? "",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: "Roboto",
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// 🖼 IMAGE (optional)
+                if (slide["imageUrl"] != null &&
+                    slide["imageUrl"].toString().isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      slide["imageUrl"],
+                      height: 220,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

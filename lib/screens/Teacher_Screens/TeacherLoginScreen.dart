@@ -144,6 +144,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                             style: const TextStyle(
                               color: Colors.yellow,
                               fontSize: 20,
+                              fontFamily: "Roboto",
                             ),
                             decoration: InputDecoration(
                               hintText: "Enter email",
@@ -164,6 +165,7 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                             style: const TextStyle(
                               color: Colors.yellow,
                               fontSize: 20,
+                              fontFamily: "Roboto",
                             ),
                             decoration: InputDecoration(
                               hintText: "Enter password",

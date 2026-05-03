@@ -3,6 +3,9 @@ import 'package:wordstudy_app/Models/TeacherDashboardModel.dart';
 import 'package:wordstudy_app/colors/colorRes.dart';
 import 'package:wordstudy_app/constants.dart';
 import 'package:wordstudy_app/generalimports.dart';
+import 'package:wordstudy_app/screens/Teacher_Screens/CreateLessionScreen.dart';
+import 'package:wordstudy_app/screens/Teacher_Screens/CreateTestScreen.dart';
+import 'package:wordstudy_app/screens/Teacher_Screens/TeacherStudentsScreen.dart';
 import 'package:wordstudy_app/screens/signUpScreen.dart';
 
 class Teacherhomescreen extends StatefulWidget {
@@ -14,107 +17,105 @@ class Teacherhomescreen extends StatefulWidget {
 
 class _TeacherhomescreenState extends State<Teacherhomescreen> {
   TeacherDashboardModel? data;
-bool isLoading = true;
-@override
-void initState() {
-  super.initState();
-  loadDashboard();
-}
-Future<void> _logout() async {
-  await FirebaseAuth.instance.signOut();
-
-  await SessionManager.setUserRole("");
-
-  if (!mounted) return;
-
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const StudentSetupScreen(), // or your entry screen
-    ),
-    (route) => false,
-  );
-}
-Future<void> loadDashboard() async {
-  try {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    final firestore = FirebaseFirestore.instance;
-
-    final teacherDoc =
-        await firestore.collection("teachers").doc(uid).get();
-
-    final teacherData = teacherDoc.data() ?? {};
-
-    final lessonsSnap = await firestore
-        .collection("teachers")
-        .doc(uid)
-        .collection("lessons")
-        .get();
-
-    final testsSnap = await firestore
-        .collection("teachers")
-        .doc(uid)
-        .collection("tests")
-        .get();
-
-    final studentsSnap = await firestore
-        .collection("teachers")
-        .doc(uid)
-        .collection("students")
-        .get();
-
-    final resultsSnap = await firestore
-        .collection("test_results")
-        .get();
-
-    int totalScore = 0;
-    int totalQuestions = 0;
-
-    int parseInt(dynamic value) {
-      if (value is int) return value;
-      if (value is double) return value.toInt();
-      return 0;
-    }
-
-    for (var doc in resultsSnap.docs) {
-      final data = doc.data();
-
-      final score = parseInt(data["score"]);
-      final total = parseInt(data["total"]);
-
-      totalScore += score;
-      totalQuestions += total;
-    }
-
-    double avgScore = 0;
-
-    if (totalQuestions > 0) {
-      avgScore = (totalScore / totalQuestions) * 100;
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      data = TeacherDashboardModel(
-        teacherName: teacherData['name'] ?? '',
-        avatarUrl: teacherData['avatar'] ?? '',
-        lessonsCount: lessonsSnap.docs.length,
-        testsCount: testsSnap.docs.length,
-        studentsCount: studentsSnap.docs.length,
-        avgScore: avgScore,
-      );
-
-      isLoading = false;
-    });
-  } catch (e) {
-    if (!mounted) return;
-
-    setState(() {
-      isLoading = false;
-    });
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    loadDashboard();
   }
-}
 
+  Future<void> _logout() async {
+    await FirebaseAuth.instance.signOut();
+
+    await SessionManager.setUserRole("");
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const StudentSetupScreen(), // or your entry screen
+      ),
+      (route) => false,
+    );
+  }
+
+  Future<void> loadDashboard() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final firestore = FirebaseFirestore.instance;
+
+      final teacherDoc = await firestore.collection("teachers").doc(uid).get();
+
+      final teacherData = teacherDoc.data() ?? {};
+
+      final lessonsSnap = await firestore
+          .collection("teachers")
+          .doc(uid)
+          .collection("lessons")
+          .get();
+
+      final testsSnap = await firestore
+          .collection("teachers")
+          .doc(uid)
+          .collection("tests")
+          .get();
+
+      final studentsSnap = await firestore
+          .collection("teachers")
+          .doc(uid)
+          .collection("students")
+          .get();
+
+      final resultsSnap = await firestore.collection("test_results").get();
+
+      int totalScore = 0;
+      int totalQuestions = 0;
+
+      int parseInt(dynamic value) {
+        if (value is int) return value;
+        if (value is double) return value.toInt();
+        return 0;
+      }
+
+      for (var doc in resultsSnap.docs) {
+        final data = doc.data();
+
+        final score = parseInt(data["score"]);
+        final total = parseInt(data["total"]);
+
+        totalScore += score;
+        totalQuestions += total;
+      }
+
+      double avgScore = 0;
+
+      if (totalQuestions > 0) {
+        avgScore = (totalScore / totalQuestions) * 100;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        data = TeacherDashboardModel(
+          teacherName: teacherData['name'] ?? '',
+          avatarUrl: avatarImageTeacher,
+          lessonsCount: lessonsSnap.docs.length,
+          testsCount: testsSnap.docs.length,
+          studentsCount: studentsSnap.docs.length,
+          avgScore: avgScore,
+        );
+
+        isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,65 +137,69 @@ Future<void> loadDashboard() async {
             child: Column(
               children: [
                 Row(
-  children: [
-    CircleAvatar(
-      radius: 35,
-      backgroundColor: Colors.white,
-      backgroundImage: (data?.avatarUrl != null &&
-              data!.avatarUrl.isNotEmpty)
-          ? NetworkImage(data!.avatarUrl)
-          : null,
-      child: (data?.avatarUrl == null || data!.avatarUrl.isEmpty)
-          ? const Icon(Icons.person, color: Colors.grey)
-          : null,
-    ),
+                  children: [
+                    CircleAvatar(
+                      radius: 27,
+                      backgroundColor: ColorRes.SecondryAppColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: SvgPicture.asset(
+                          "assets/icons/Teachericon.svg",
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
 
-    const SizedBox(width: 16),
+                    const SizedBox(width: 16),
 
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Hi 👋",
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 16,
-          ),
-        ),
-        Text(
-          data?.teacherName ?? "",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Hi 👋",
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
+                        Text(
+                          data?.teacherName ?? "",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
 
-    const Spacer(),
+                    const Spacer(),
 
-    GestureDetector(
-      onTap: () => _logout(),
-      child: const Icon(
-        Icons.logout,
-        color: Colors.white,
-        size: 26,
-      ),
-    ),
-  ],
-),
+                    GestureDetector(
+                      onTap: () => _logout(),
+                      child: const Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                        size: 26,
+                      ),
+                    ),
+                  ],
+                ),
 
                 const SizedBox(height: 30),
                 Expanded(
                   child: Column(
                     children: [
-
                       Row(
                         children: [
-                          _statCard("Lessons", (data?.lessonsCount??"0").toString(), Icons.menu_book),
+                          _statCard(
+                            "Lessons",
+                            (data?.lessonsCount ?? "0").toString(),
+                            Icons.menu_book,
+                          ),
                           const SizedBox(width: 12),
-                          _statCard("Tests", (data?.testsCount??"0").toString(), Icons.quiz),
+                          _statCard(
+                            "Tests",
+                            (data?.testsCount ?? "0").toString(),
+                            Icons.quiz,
+                          ),
                         ],
                       ),
 
@@ -202,21 +207,50 @@ Future<void> loadDashboard() async {
 
                       Row(
                         children: [
-                          _statCard("Students", (data?.studentsCount??"0").toString(), Icons.people),
+                          _statCard(
+                            "Students",
+                            (data?.studentsCount ?? "0").toString(),
+                            Icons.people,
+                          ),
                           const SizedBox(width: 12),
-                          _statCard("Avg Score", "${(data?.avgScore ?? 0).toStringAsFixed(1)}%", Icons.bar_chart),
+                          _statCard(
+                            "Avg Score",
+                            "${(data?.avgScore ?? 0).toStringAsFixed(1)}%",
+                            Icons.bar_chart,
+                          ),
                         ],
                       ),
 
                       const SizedBox(height: 30),
 
-                      _actionButton("Create Lesson", Icons.add_box, () {}),
+                      _actionButton("Create Lesson", Icons.add_box, () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const Createlessionscreen(),
+                          ),
+                        );
+                      }),
                       const SizedBox(height: 12),
 
-                      _actionButton("Create Test", Icons.edit, () {}),
+                      _actionButton("Create Test", Icons.edit, () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const Createtestscreen(),
+                          ),
+                        );
+                      }),
                       const SizedBox(height: 12),
 
-                      _actionButton("View Results", Icons.analytics, () {}),
+                      _actionButton("View Results", Icons.analytics, () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const Teacherstudentsscreen(),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -248,12 +282,7 @@ Future<void> loadDashboard() async {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white70,
-              ),
-            ),
+            Text(title, style: const TextStyle(color: Colors.white70)),
           ],
         ),
       ),

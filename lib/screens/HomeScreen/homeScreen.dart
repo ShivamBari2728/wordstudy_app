@@ -21,21 +21,19 @@ class _HomescreenState extends State<Homescreen> {
     super.initState();
     _loadStudentData();
   }
+
   Future<void> _logout() async {
-  /// Clear session (student side)
-  await SessionManager.setUserRole("");
-  await SessionManager.setProfileCreated(false);
+    await SessionManager.setUserRole("");
+    await SessionManager.setProfileCreated(false);
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const StudentSetupScreen(), // your entry screen
-    ),
-    (route) => false,
-  );
-}
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const StudentSetupScreen()),
+      (route) => false,
+    );
+  }
 
   Future<void> _loadStudentData() async {
     final name = await SessionManager.getStudentName();
@@ -52,7 +50,8 @@ class _HomescreenState extends State<Homescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.primaryAppColor, // your app background color
+      
+      backgroundColor: ColorRes.primaryAppColor,
 
       body: SafeArea(
         child: Padding(
@@ -60,7 +59,6 @@ class _HomescreenState extends State<Homescreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// ---------------- PROFILE SECTION ----------------
               ClipRRect(
                 borderRadius: BorderRadiusGeometry.circular(20),
 
@@ -69,131 +67,128 @@ class _HomescreenState extends State<Homescreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-  children: [
-    FutureBuilder<String>(
-      future: SessionManager.getStudentGender(),
-      builder: (context, snapshot) {
-        final gender = snapshot.data ?? "boy";
+                      children: [
+                        FutureBuilder<String>(
+                          future: SessionManager.getStudentGender(),
+                          builder: (context, snapshot) {
+                            final gender = snapshot.data ?? "boy";
 
-        return CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.white,
-          backgroundImage: NetworkImage(
-            gender == "girl"
-                ? constains.avaterImageGirl
-                : constains.avaterImageBoy,
-          ),
-        );
-      },
-    ),
+                            return CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.white,
+                              backgroundImage: NetworkImage(
+                                gender == "girl"
+                                    ? constains.avaterImageGirl
+                                    : constains.avaterImageBoy,
+                              ),
+                            );
+                          },
+                        ),
 
-    const SizedBox(width: 12),
+                        const SizedBox(width: 12),
 
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          studentName.isEmpty ? "Hi!" : "Hi, $studentName!",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-          ),
-        ),
-        Text(
-          studentGrade.isEmpty ? "" : "Grade $studentGrade",
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 16,
-          ),
-        ),
-      ],
-    ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              studentName.isEmpty ? "Hi!" : "Hi, $studentName!",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                              ),
+                            ),
+                            Text(
+                              studentGrade.isEmpty ? "" : "Roll No : $studentGrade",
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
 
-    const Spacer(), // 🔥 pushes logout to right
+                        const Spacer(),
 
-    /// 🔥 LOGOUT ICON
-    GestureDetector(
-      onTap: () => _logout(),
-      child: const Icon(
-        Icons.logout,
-        color: Colors.white,
-        size: 26,
-      ),
-    ),
-  ],
-)
+                        GestureDetector(
+                          onTap: () => _logout(),
+                          child: const Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
 
+              // const SizedBox(height: 25),
+
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: Container(
+              //         padding: const EdgeInsets.all(16),
+              //         decoration: BoxDecoration(
+              //           color: Colors.white.withOpacity(0.25),
+              //           borderRadius: BorderRadius.circular(16),
+              //         ),
+              //         child: Column(
+              //           children: [
+              //             Icon(
+              //               Icons.menu_book_rounded,
+              //               color: Colors.white,
+              //               size: 28,
+              //             ),
+              //             const SizedBox(height: 6),
+              //             const Text(
+              //               "22 Words\nLearned",
+              //               textAlign: TextAlign.center,
+              //               style: TextStyle(
+              //                 color: Colors.white,
+              //                 fontSize: 16,
+              //                 height: 1.2,
+              //                 fontWeight: FontWeight.w600,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ),
+
+              //     const SizedBox(width: 12),
+
+              //     Expanded(
+              //       child: Container(
+              //         padding: const EdgeInsets.all(16),
+              //         decoration: BoxDecoration(
+              //           color: Colors.white.withOpacity(0.25),
+              //           borderRadius: BorderRadius.circular(16),
+              //         ),
+              //         child: Column(
+              //           children: [
+              //             Icon(Icons.star, color: Colors.yellow, size: 30),
+              //             const SizedBox(height: 6),
+              //             const Text(
+              //               "Stars Earned\n8",
+              //               textAlign: TextAlign.center,
+              //               style: TextStyle(
+              //                 color: Colors.white,
+              //                 fontSize: 16,
+              //                 height: 1.2,
+              //                 fontWeight: FontWeight.w600,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+
               const SizedBox(height: 25),
 
-              /// ---------------- STATS SECTION ----------------
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.25),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.menu_book_rounded,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            "22 Words\nLearned",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              height: 1.2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.25),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(Icons.star, color: Colors.yellow, size: 30),
-                          const SizedBox(height: 6),
-                          const Text(
-                            "Stars Earned\n8",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              height: 1.2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 25),
-
-              /// ---------------- MENU BUTTONS ----------------
               InkWell(
                 onTap: () {
                   Navigator.push(
@@ -225,15 +220,9 @@ class _HomescreenState extends State<Homescreen> {
                 ),
               ),
               InkWell(
-                //  onTap: () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (_) => const Homescreen()),
-                //   );
-                // },
                 child: _menuButton(
                   icon: Icons.sports_esports,
-                  text: "Play a Game",
+                  text: "Play a Game (coming soon)",
                   bgColor: Colors.orangeAccent.shade100,
                 ),
               ),
@@ -244,7 +233,6 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  /// ---------------- REUSABLE MENU BUTTON WIDGET ----------------
   Widget _menuButton({
     required IconData icon,
     required String text,
@@ -261,14 +249,7 @@ class _HomescreenState extends State<Homescreen> {
         children: [
           Icon(icon, size: 26, color: Colors.white),
           const SizedBox(width: 15),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 18,
-              //fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
+          Text(text, style: const TextStyle(fontSize: 18, color: Colors.white)),
         ],
       ),
     );

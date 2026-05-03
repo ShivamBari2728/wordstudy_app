@@ -21,7 +21,7 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
   @override
   void initState() {
     super.initState();
-    _checkIfAlreadySignedIn();
+   // _checkIfAlreadySignedIn();
   }
 
   Future<void> _checkIfAlreadySignedIn() async {
@@ -208,7 +208,7 @@ class _StudentSetupScreenState extends State<StudentSetupScreen> {
                                 horizontal: 20,
                                 vertical: 18,
                               ),
-                              hintText: "Enter your grade (e.g. 1, 2, 3)",
+                              hintText: "Enter your Rollno",
                               hintStyle: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 18,

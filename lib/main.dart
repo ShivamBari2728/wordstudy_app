@@ -1,9 +1,5 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:wordstudy_app/firebase_options.dart';
-import 'package:wordstudy_app/screens/mainscreen.dart';
+import 'package:wordstudy_app/StartupScreen.dart';
 import 'package:wordstudy_app/generalimports.dart';
 import 'package:wordstudy_app/screens/signUpScreen.dart';
 
@@ -36,9 +32,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        brightness: Brightness.dark,
         fontFamily: "Bangers"
       ),
-      home: const StudentSetupScreen(),
+      home: const StartupScreen(),
     );
   }
 }

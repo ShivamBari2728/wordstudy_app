@@ -1,0 +1,14 @@
+flutter_native_splash:
+  color: "#0088FF"
+
+  image: assets/icons/appicon.png
+
+  android: true
+  ios: true
+
+  android_12:
+    image: assets/icons/appicon.png
+    icon_background_color: "#0088FF"
+
+  ios_content_mode: center
+  web: false

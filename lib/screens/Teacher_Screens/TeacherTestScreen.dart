@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wordstudy_app/colors/colorRes.dart';
 import 'package:wordstudy_app/screens/Teacher_Screens/CreateTestScreen.dart';
-// import your CreateTestScreen here
-// import 'package:wordstudy_app/screens/Teacher_Screens/CreateTestScreen.dart';
 
 class Teachertestscreen extends StatefulWidget {
   const Teachertestscreen({super.key});
@@ -24,7 +22,6 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
     fetchTests();
   }
 
-  /// 🔥 FETCH TESTS (same as lessons but "tests")
   Future<void> fetchTests() async {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -32,7 +29,7 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
       final snapshot = await FirebaseFirestore.instance
           .collection("teachers")
           .doc(uid)
-          .collection("tests") // ✅ changed
+          .collection("tests")
           .orderBy("created_at", descending: true)
           .get();
 
@@ -56,21 +53,19 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
     }
   }
 
-  /// 🗑 DELETE TEST
   Future<void> deleteTest(String id) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
     await FirebaseFirestore.instance
         .collection("teachers")
         .doc(uid)
-        .collection("tests") // ✅ changed
+        .collection("tests")
         .doc(id)
         .delete();
 
     fetchTests();
   }
 
-  /// ⚠️ DELETE DIALOG
   void showDeleteDialog(String id) {
     showDialog(
       context: context,
@@ -218,7 +213,7 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
         ),
       ),
 
-      /// ➕ CREATE TEST BUTTON
+
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: ColorRes.primaryAppColor,
         onPressed: () async {
@@ -240,7 +235,6 @@ class _TeachertestscreenState extends State<Teachertestscreen> {
     );
   }
 
-  /// 📦 CARD UI (same as lesson)
   Widget _card(String title, String id) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),

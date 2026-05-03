@@ -22,7 +22,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
     fetchLessons();
   }
 
-  /// 🔥 Fetch lessons
   Future<void> fetchLessons() async {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -54,7 +53,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
     }
   }
 
-  /// 🗑 DELETE LESSON
   Future<void> deleteLesson(String lessonId) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -65,10 +63,9 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
         .doc(lessonId)
         .delete();
 
-    fetchLessons(); // 🔥 refresh UI
+    fetchLessons();
   }
 
-  /// ⚠️ CONFIRM DELETE POPUP
   void showDeleteDialog(String lessonId) {
     showDialog(
       context: context,
@@ -105,7 +102,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
 
                 Row(
                   children: [
-                    /// Cancel
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -128,7 +124,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
 
                     const SizedBox(width: 10),
 
-                    /// Delete
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
@@ -253,7 +248,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
     );
   }
 
-  /// 📦 LESSON CARD
   Widget _lessonCard(String title, String lessonId) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -284,7 +278,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
             ),
           ),
 
-          /// COPY
           GestureDetector(
             onTap: () {
               Clipboard.setData(ClipboardData(text: lessonId));
@@ -297,7 +290,6 @@ class _TeacherlessionsscreenState extends State<Teacherlessionsscreen> {
 
           const SizedBox(width: 12),
 
-          /// 🗑 DELETE
           GestureDetector(
             onTap: () => showDeleteDialog(lessonId),
             child: const Icon(Icons.delete, color: Colors.white),

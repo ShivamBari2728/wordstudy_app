@@ -13,14 +13,11 @@ class Createtestscreen extends StatefulWidget {
 }
 
 class _CreatetestscreenState extends State<Createtestscreen> {
-  /// 🔹 Step control
   int currentStep = 0;
 
-  /// 🔹 Controllers
   final TextEditingController titleController = TextEditingController();
   final TextEditingController gradeController = TextEditingController();
 
-  /// 🔹 Questions list
   List<Map<String, dynamic>> questions = [];
 
   bool isLoading = false;
@@ -128,7 +125,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
 
                 const SizedBox(height: 16),
 
-                /// CODE BOX
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -149,7 +145,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
 
                 Row(
                   children: [
-                    /// Copy
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -164,7 +159,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
 
                     const SizedBox(width: 10),
 
-                    /// Done
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -199,7 +193,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
     );
   }
 
-  /// 🎨 Background wrapper
   Widget _bg({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
@@ -236,7 +229,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
     );
   }
 
-  /// 🧠 STEP 1: Title + Grade
   Widget _buildStep1() {
     return _bg(
       child: Padding(
@@ -278,7 +270,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
     );
   }
 
-  /// 🧠 STEP 2: Questions
   Widget _buildStep2() {
     return _bg(
       child: Column(
@@ -326,7 +317,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
 
                       const SizedBox(height: 10),
 
-                      /// Options
                       ...List.generate(4, (i) {
                         return Row(
                           children: [
@@ -353,7 +343,6 @@ class _CreatetestscreenState extends State<Createtestscreen> {
             ),
           ),
 
-          /// Bottom Buttons
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(

@@ -28,7 +28,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
     });
 
     try {
-      /// 🔐 TRY LOGIN
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
@@ -36,7 +35,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
       await SessionManager.setUserRole("teacher");
 
-      /// 🔥 Create Firestore doc if not exists
       final docRef = FirebaseFirestore.instance.collection("teachers").doc(uid);
 
       final doc = await docRef.get();
@@ -56,7 +54,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
         MaterialPageRoute(builder: (_) => const Mainscreen()),
       );
     } on FirebaseAuthException catch (e) {
-      /// 🔥 AUTO SIGNUP (TEMP SOLUTION)
       if (e.code == 'user-not-found') {
         try {
           final userCredential = await FirebaseAuth.instance
@@ -129,12 +126,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                             radius: 32,
                             backgroundColor: Colors.white,
                             backgroundImage: NetworkImage(avatarImageTeacher),
-                            // onBackgroundImageError: (_, __) {},
-                            // child: const Icon(
-                            //   Icons.person,
-                            //   size: 40,
-                            //   color: Colors.grey,
-                            // ),
                           ),
                           const SizedBox(height: 20),
                           const Text(
@@ -148,7 +139,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
                           const SizedBox(height: 40),
 
-                          /// 📧 EMAIL
                           TextField(
                             controller: _emailController,
                             style: const TextStyle(
@@ -189,7 +179,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
                           const SizedBox(height: 20),
 
-                          /// ❌ ERROR
                           if (errorText != null)
                             Text(
                               errorText!,
@@ -198,7 +187,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
                           const SizedBox(height: 30),
 
-                          /// 👉 LOGIN BUTTON
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: ColorRes.primaryAppColor,
@@ -226,7 +214,6 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
                           const SizedBox(height: 40),
 
-                          /// 🔙 BACK
                           GestureDetector(
                             onTap: () {
                               Navigator.pop(context);

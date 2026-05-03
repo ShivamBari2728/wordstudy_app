@@ -57,7 +57,6 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
               child: Column(
                 children: [
 
-                  /// 🔥 HEADER
                   const Text(
                     "Student Results",
                     style: TextStyle(
@@ -95,7 +94,6 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
                           final percent =
                               ((score / total) * 100).toStringAsFixed(1);
 
-                          /// 🔥 USE TEST TITLE DIRECTLY
                           final testTitle =
                               data["testTitle"] ?? "Test";
 
@@ -118,7 +116,6 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
     );
   }
 
-  /// 🔥 RESULT CARD
   Widget _resultCard({
     required String name,
     required String grade,
@@ -136,7 +133,6 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
       child: Row(
         children: [
 
-          /// 👤 AVATAR
           const CircleAvatar(
             backgroundColor: Colors.white,
             child: Icon(Icons.person, color: Colors.black),
@@ -144,7 +140,6 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
 
           const SizedBox(width: 12),
 
-          /// 📊 INFO
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +158,6 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
                   style: const TextStyle(color: Colors.white70),
                 ),
 
-                /// 🔥 FIXED HERE
                 Text(
                   "Test: $testTitle",
                   style: const TextStyle(color: Colors.white54),
@@ -172,7 +166,7 @@ class _TeacherstudentsscreenState extends State<Teacherstudentsscreen> {
             ),
           ),
 
-          /// 📈 SCORE
+
           Column(
             children: [
               Text(

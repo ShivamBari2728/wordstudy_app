@@ -28,7 +28,6 @@ class _CreatelessionscreenState extends State<Createlessionscreen> {
 
   bool isLoading = false;
 
-  /// ➕ Add slide
   void addSlide() {
     setState(() {
       slides.add({
@@ -38,7 +37,6 @@ class _CreatelessionscreenState extends State<Createlessionscreen> {
     });
   }
 
-  /// ❌ Remove slide
   void removeSlide(int index) {
     if (slides.length == 1) return;
 
@@ -47,7 +45,6 @@ class _CreatelessionscreenState extends State<Createlessionscreen> {
     });
   }
 
-  /// 💾 Save lesson
 Future<void> saveLesson() async {
   final title = titleController.text.trim();
   final grade = gradeController.text.trim();
@@ -67,8 +64,6 @@ Future<void> saveLesson() async {
 
   try {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-
-    /// 🔥 Save lesson
     final docRef = await FirebaseFirestore.instance
         .collection("teachers")
         .doc(uid)
@@ -86,7 +81,6 @@ Future<void> saveLesson() async {
 
     setState(() => isLoading = false);
 
-    /// 🔥 SHOW POPUP
     showDialog(
   context: context,
   barrierDismissible: false,
@@ -105,7 +99,6 @@ Future<void> saveLesson() async {
           mainAxisSize: MainAxisSize.min,
           children: [
 
-            /// 🎉 Title
             const Text(
               "Lesson Created 🎉",
               style: TextStyle(
@@ -126,7 +119,6 @@ Future<void> saveLesson() async {
 
             const SizedBox(height: 16),
 
-            /// 🔥 CODE BOX
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -145,7 +137,6 @@ Future<void> saveLesson() async {
 
             const SizedBox(height: 20),
 
-            /// 🔘 BUTTONS
             Row(
               children: [
 
@@ -180,7 +171,6 @@ Future<void> saveLesson() async {
 
                 const SizedBox(width: 10),
 
-                /// Done
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -246,7 +236,6 @@ Future<void> saveLesson() async {
     );
   }
 
-  /// 🧾 Step 1 UI
   Widget _buildStepOne() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -278,7 +267,6 @@ Future<void> saveLesson() async {
     );
   }
 
-  /// 📚 Slides UI
   Widget _buildSlides() {
     return Column(
       children: [
@@ -361,7 +349,6 @@ Future<void> saveLesson() async {
     );
   }
 
-  /// ✨ Glass Field
   Widget _glassField(TextEditingController controller, String hint) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -381,7 +368,6 @@ Future<void> saveLesson() async {
     );
   }
 
-  /// 🔘 Primary Button
   Widget _primaryButton(String text, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -406,7 +392,6 @@ Future<void> saveLesson() async {
     );
   }
 
-  /// ⚪ Secondary Button
   Widget _secondaryButton(String text, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,

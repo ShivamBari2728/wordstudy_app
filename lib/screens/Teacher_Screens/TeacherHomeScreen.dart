@@ -21,10 +21,8 @@ void initState() {
   loadDashboard();
 }
 Future<void> _logout() async {
-  /// Firebase logout
   await FirebaseAuth.instance.signOut();
 
-  /// Clear role
   await SessionManager.setUserRole("");
 
   if (!mounted) return;
@@ -42,13 +40,11 @@ Future<void> loadDashboard() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final firestore = FirebaseFirestore.instance;
 
-    /// 🔹 TEACHER DATA
     final teacherDoc =
         await firestore.collection("teachers").doc(uid).get();
 
     final teacherData = teacherDoc.data() ?? {};
 
-    /// 🔹 COUNTS
     final lessonsSnap = await firestore
         .collection("teachers")
         .doc(uid)
@@ -67,7 +63,6 @@ Future<void> loadDashboard() async {
         .collection("students")
         .get();
 
-    /// 🔥 FETCH TEST RESULTS
     final resultsSnap = await firestore
         .collection("test_results")
         .get();
@@ -75,7 +70,6 @@ Future<void> loadDashboard() async {
     int totalScore = 0;
     int totalQuestions = 0;
 
-    /// 🔥 SAFE PARSER FUNCTION
     int parseInt(dynamic value) {
       if (value is int) return value;
       if (value is double) return value.toInt();
@@ -92,7 +86,6 @@ Future<void> loadDashboard() async {
       totalQuestions += total;
     }
 
-    /// 🔥 CALCULATE AVG %
     double avgScore = 0;
 
     if (totalQuestions > 0) {
@@ -121,15 +114,7 @@ Future<void> loadDashboard() async {
     });
   }
 }
-  ///  Temporary dummy data (replace with API later)
-  // final TeacherDashboardModel data = TeacherDashboardModel(
-  //   teacherName: "Shivam Sir",
-  //   avatarUrl: avatarImageTeacher,
-  //   lessonsCount: 12,
-  //   testsCount: 8,
-  //   studentsCount: 45,
-  //   avgScore: 76.5,
-  // );
+
 
   @override
   Widget build(BuildContext context) {
@@ -187,9 +172,8 @@ Future<void> loadDashboard() async {
       ],
     ),
 
-    const Spacer(), // 🔥 pushes icon to right
+    const Spacer(),
 
-    /// 🔥 LOGOUT ICON
     GestureDetector(
       onTap: () => _logout(),
       child: const Icon(
